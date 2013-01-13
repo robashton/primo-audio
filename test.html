@@ -3,23 +3,6 @@
     <input type="button" value="1"></input>
     <input type="button" value="2"></input>
     <input type="button" value="5"></input>
-    <script type="text/javascript">
-
-      var sound = new Sound("media/fire")
-
-      var buttons = document.getElementsByTagName("input")
-      for(var i = 0; i < buttons.length; i++) {
-        var button = buttons[i]
-        button.onclick = playSound
-      }
-
-      function playSound(e) {
-        var ele = e.srcElement
-        var times = parseInt(ele.getAttribute('value'), 10)
-        for(var i = 0 ; i < times; i++)
-          sound.play()
-      }
-
-    </script>
+    <script type="text/javascript" src="test-built.js"></script>
   </body>
 </html>
