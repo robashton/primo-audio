@@ -1,3 +1,4 @@
+
 var Sound = function(path) {
   Sound.initSystem()
   this.path = path
@@ -13,40 +14,29 @@ var Sound = function(path) {
 }
 Sound.prototype = {
   loadAudioDirectly: function() {
+    this.pool = true
     this.rawdata = new Audio()
     this.rawdata.src = this.loadedPath
   },
   detectAudio: function() {
-    if(this.loadmp3()) return
-    if(this.loadogg()) return
-    if(this.loadaac()) return
-    if(this.loadwav()) return
-    console.warn('Unable to load suitable audio for ', this.path)
-  },
-  loadmp3: function() {
-    if(!Sound.mp3) return false
-    var xmlHttp = new XMLHttpRequest()
-    xmlHttp.onreadystatechange = function() {
-      if(xmlHttp.readyState === 4) {
-        console.log(xmlHttp.responseText)
-      }
+    var attempts = [ loadmp3, loadogg, loadaac, loadwav ]
+    var self = this
+    var success = function(path) {
+      self.loadedPath = path
+      if(self.loadedPath.indexOf('data:') === 0)
+        this.pool = false
+      else
+        this.pool = true
     }
-    xmlHttp.open( "GET", this.path + '.mp3.base64', true )
-    xmlHttp.send( null )
-  },
-  loadogg: function() {
-    if(!Sound.ogg) return false
-
-
-  },
-  loadaac: function() {
-    if(!Sound.aac) return false
-
-
-  },
-  loadwav: function() {
-    if(!Sound.wav) return false
-
+    var tryNext = function() {
+      if(attempts.length === 0) {
+        console.warn('Unable to load audio for ', self.path)
+        return
+      }
+      var fn = attempts.shift()
+      fn(self.path, success, tryNext)
+    }
+    tryNext()
   },
   play: function() {
     if(!Sound.Enabled) return
@@ -70,6 +60,62 @@ Sound.initSystem = function() {
   this.ogg = !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, ''))
   this.wav = !!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, ''))
   this.aac = !!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, ''))
+}
+
+function downloadFile(path, cb) {
+  var xmlHttp = new XMLHttpRequest()
+  xmlHttp.onreadystatechange = function() {
+    if(xmlHttp.readyState === 4) {
+      cb(xmlHttp.responseText)
+    }
+  }
+  xmlHttp.open( "GET", path, true )
+  xmlHttp.send( null )
+}
+
+function tryBase64(mime, path, success, failure) {
+  downloadFile(path, function(data) {
+    if(data)
+      return success(mime + ',' + data)
+    return failure()
+  })
+}
+
+function tryAudio(path, success, failure) {
+  var audio = new Audio()
+  try { 
+    audio.src = path
+  } catch(ex) {
+    return failure()
+  }
+  return success(path)
+}
+
+function loadmp3(path, success, failure) {
+  if(!Sound.mp3) return failure()
+  tryBase64('data:audio/mp3', path + '.mp3.base64', success, function() {
+     tryAudio(path + '.mp3', success, failure)
+   })
+}
+
+function loadogg(path, success, failure) {
+  if(!Sound.ogg) return false
+  tryBase64('data:audio/ogg', path + '.ogg.base64', success, function() {
+    tryAudio(path + '.ogg', success, failure)
+  })
+}
+function loadaac(path, success, failure) {
+  if(!Sound.aac) return false
+  tryBase64('data:audio/mp4', path + '.mp4.base64', success, function() {
+     tryAudio(path + '.mp4', success, failure)
+  })
+}
+
+function loadwav(path, success, failure) {
+  if(!Sound.wav) return false
+  tryBase64('data:audio/wav', path + '.wav.base64', success, function() {
+   tryAudio(path + '.wav', success, failure)
+  })
 }
 
 module.exports = Sound
