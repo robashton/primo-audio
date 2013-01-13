@@ -1,0 +1,20 @@
+{
+  "name": "primo-audio",
+  "version": "0.0.5",
+  "description": "Sound engine for the primojs suite",
+  "main": "primo-sounds.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robashton/primo-audio"
+  },
+  "keywords": [
+    "audio",
+    "primojs",
+    "games"
+  ],
+  "author": "Rob Ashton",
+  "license": "MIT"
+}
