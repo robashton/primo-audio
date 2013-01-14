@@ -4,10 +4,9 @@
   "description": "Sound engine for the primojs suite",
   "main": "primo-sounds.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npm i -g primo-lumber browserify"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
+  "dependencies": {
     "express": "",
     "send": ""
   },

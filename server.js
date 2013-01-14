@@ -4,7 +4,7 @@ var url = require('url');
 var path = require('path')
 var app = require('express')()
 
-var server = http.createServer(app).listen(8080)
+var server = http.createServer(app).listen(process.env.PORT || 8080)
 app.use(require('express').bodyParser())
 
 
