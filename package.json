@@ -6,10 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "express": "",
-    "send": ""
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/robashton/primo-audio"
