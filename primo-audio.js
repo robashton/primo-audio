@@ -75,12 +75,13 @@ function handleAudioLoading(audio, cb) {
   var force = function () {
     audio.pause();
     audio.removeEventListener('play', force, false);
-    cb()
+    if(cb) { cb(); cb = null; }
   };
 
   var progress = function () {
     audio.removeEventListener('play', force, false);
     audio.removeEventListener('progress', progress, false);
+    if(cb) { cb(); cb = null; }
   };
 
   audio.addEventListener('play', force, false);
@@ -96,6 +97,7 @@ function handleAudioLoading(audio, cb) {
 }
 
 function tryBase64(mime, path, success, failure) {
+  if(!Sound.allowBase64) return failure()
   downloadFile(path, function(data) {
     if(!data) return failure
     var audio = new Audio()

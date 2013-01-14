@@ -2,7 +2,7 @@
   "name": "primo-audio",
   "version": "0.0.6",
   "description": "Sound engine for the primojs suite",
-  "main": "primo-sounds.js",
+  "main": "primo-audio.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
