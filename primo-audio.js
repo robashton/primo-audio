@@ -1,30 +1,23 @@
+var _ = require('underscore')
+  , Eventable = require('primo-events')
 
 var Sound = function(path) {
+  Eventable.call(this)
+
   Sound.initSystem()
   this.path = path
   this.loadedPath = ''
   this.rawdata = null
-  this.pool = false
   if(!Sound.Enabled) return
-
-  if(path.indexOf('.') > 0)
-    this.loadAudioDirectly(path)
-  else
-    this.detectAudio()
+  this.detectAudio()
 }
 Sound.prototype = {
-  loadAudioDirectly: function(path) {
-    this.loadedPath = path
-    this.rawdata = new Audio()
-    this.rawdata.preload = true
-    this.rawdata.volume = 1.0
-    this.rawdata.src = path
-  },
   detectAudio: function() {
     var attempts = [ loadmp3, loadogg, loadaac, loadwav ]
     var self = this
     var success = function(rawdata) {
       self.rawdata = rawdata
+      self.raise('loaded')
     }
     var tryNext = function() {
       if(attempts.length === 0) {
@@ -38,18 +31,16 @@ Sound.prototype = {
   },
   play: function() {
     if(!Sound.Enabled) return
-    this.getAudio().play()
+    var audio = this.getAudio()
+    audio.currentTime = 0
+    audio.play()
   },
   getAudio: function() {
-    if(this.pool)
-      return this.findAvailablePooledAudio()
-    return this.rawdata.cloneNode()
-  },
-  findAvailablePooledAudio: function() {
-    var audio = new Audio()
-    return audio
+    return this.rawdata
   }
 }
+_.extend(Sound.prototype, Eventable.prototype)
+
 Sound.allowBase64 = true
 Sound.initSystem = function() {
   if(this.initialized) return
