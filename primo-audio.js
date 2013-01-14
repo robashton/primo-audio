@@ -8,23 +8,10 @@ var Sound = function(path) {
   this.path = path
   this.loadedPath = ''
   this.rawdata = null
-  this.pool = false
   if(!Sound.Enabled) return
-
-  if(path.indexOf('.') > 0)
-    this.loadAudioDirectly(path)
-  else
-    this.detectAudio()
+  this.detectAudio()
 }
 Sound.prototype = {
-  loadAudioDirectly: function(path) {
-    this.loadedPath = path
-    this.rawdata = new Audio()
-    this.rawdata.preload = true
-    this.rawdata.volume = 1.0
-    this.rawdata.src = path
-    this.raise('loaded')
-  },
   detectAudio: function() {
     var attempts = [ loadmp3, loadogg, loadaac, loadwav ]
     var self = this
@@ -44,16 +31,12 @@ Sound.prototype = {
   },
   play: function() {
     if(!Sound.Enabled) return
-    this.getAudio().play()
+    var audio = this.getAudio()
+    audio.currentTime = 0
+    audio.play()
   },
   getAudio: function() {
-    if(this.pool)
-      return this.findAvailablePooledAudio()
-    return this.rawdata.cloneNode()
-  },
-  findAvailablePooledAudio: function() {
-    var audio = new Audio()
-    return audio
+    return this.rawdata
   }
 }
 _.extend(Sound.prototype, Eventable.prototype)
