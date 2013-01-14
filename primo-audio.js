@@ -73,7 +73,6 @@ function downloadFile(path, cb) {
 }
 
 function tryBase64(mime, path, success, failure) {
-  return failure()
   downloadFile(path, function(data) {
     if(!data) return failure
     var audio = new Audio()
