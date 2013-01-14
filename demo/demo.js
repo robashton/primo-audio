@@ -13,3 +13,11 @@ function playSound(e) {
   for(var i = 0 ; i < times; i++)
     sound.play()
 }
+
+
+setTimeout(function() {
+  var info = document.getElementById('info')
+  info.innerText = [
+    'URI', sound.rawdata.src
+  ].join('\n')
+}, 2000)
