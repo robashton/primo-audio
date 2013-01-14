@@ -8,8 +8,7 @@ for(var i = 0; i < buttons.length; i++) {
 }
 
 function playSound(e) {
-  var ele = e.srcElement
-  var times = parseInt(ele.getAttribute('value'), 10)
+  var times = parseInt(this.getAttribute('value'), 10)
   for(var i = 0 ; i < times; i++)
     sound.play()
 }
