@@ -20,5 +20,8 @@
     "games"
   ],
   "author": "Rob Ashton",
-  "license": "MIT"
+  "license": "MIT",
+  "engines":  {
+    "node": "0.8.x"
+  }
 }
