@@ -68,12 +68,39 @@ function downloadFile(path, cb) {
   xmlHttp.send( null )
 }
 
+
+var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
+
+function handleAudioLoading(audio, cb) {
+  var force = function () {
+    audio.pause();
+    audio.removeEventListener('play', force, false);
+    cb()
+  };
+
+  var progress = function () {
+    audio.removeEventListener('progress', progress, false);
+  };
+
+  audio.addEventListener('play', force, false);
+  audio.addEventListener('progress', progress, false);
+
+  var kickoff = function () {
+    audio.play();
+    document.documentElement.removeEventListener(click, kickoff, true);
+  };
+
+  document.documentElement.addEventListener(click, kickoff, true);
+}
+
 function tryBase64(mime, path, success, failure) {
   downloadFile(path, function(data) {
     if(!data) return failure
     var audio = new Audio()
     audio.src = mime + ';base64,' + data
-    return success(audio)
+    handleAudioLoading(audio, function() {
+      success(audio)
+    })
   })
 }
 
@@ -84,7 +111,9 @@ function tryAudio(path, success, failure) {
   } catch(ex) {
     return failure()
   }
-  return success(audio)
+  handleAudioLoading(audio, function() {
+    success(audio)
+  })
 }
 
 function loadmp3(path, success, failure) {
