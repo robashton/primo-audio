@@ -15,9 +15,9 @@ function playSound(e) {
 }
 
 
-setTimeout(function() {
+sound.on('loaded', function() {
   var info = document.getElementById('info')
   info.innerText = [
     'URI', sound.rawdata.src
   ].join('\n')
-}, 2000)
+})

@@ -1,5 +1,9 @@
+var _ = require('underscore')
+  , Eventable = require('primo-events')
 
 var Sound = function(path) {
+  Eventable.call(this)
+
   Sound.initSystem()
   this.path = path
   this.loadedPath = ''
@@ -19,12 +23,14 @@ Sound.prototype = {
     this.rawdata.preload = true
     this.rawdata.volume = 1.0
     this.rawdata.src = path
+    this.raise('loaded')
   },
   detectAudio: function() {
     var attempts = [ loadmp3, loadogg, loadaac, loadwav ]
     var self = this
     var success = function(rawdata) {
       self.rawdata = rawdata
+      self.raise('loaded')
     }
     var tryNext = function() {
       if(attempts.length === 0) {
@@ -50,6 +56,8 @@ Sound.prototype = {
     return audio
   }
 }
+_.extend(Sound.prototype, Eventable.prototype)
+
 Sound.allowBase64 = true
 Sound.initSystem = function() {
   if(this.initialized) return
