@@ -46,7 +46,7 @@ Sound.prototype = {
 }
 _.extend(Sound.prototype, Eventable.prototype)
 
-Sound.allowBase64 = true
+Sound.allowBase64 = false // Shouldn't be needed if I get everthing else right
 Sound.initSystem = function() {
   if(this.initialized) return
   var a = document.createElement('audio')
@@ -96,7 +96,6 @@ function handleAudioLoading(audio, cb) {
 }
 
 function tryBase64(mime, path, success, failure) {
-  return failure()
   downloadFile(path, function(data) {
     if(!data) return failure
     var audio = new Audio()
