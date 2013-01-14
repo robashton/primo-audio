@@ -8,25 +8,23 @@ var Sound = function(path) {
   if(!Sound.Enabled) return
 
   if(path.indexOf('.') > 0)
-    this.loadAudioDirectly()
+    this.loadAudioDirectly(path)
   else
     this.detectAudio()
 }
 Sound.prototype = {
-  loadAudioDirectly: function() {
-    this.pool = true
+  loadAudioDirectly: function(path) {
+    this.loadedPath = path
     this.rawdata = new Audio()
-    this.rawdata.src = this.loadedPath
+    this.rawdata.preload = true
+    this.rawdata.volume = 1.0
+    this.rawdata.src = path
   },
   detectAudio: function() {
     var attempts = [ loadmp3, loadogg, loadaac, loadwav ]
     var self = this
-    var success = function(path) {
-      self.loadedPath = path
-      if(self.loadedPath.indexOf('data:') === 0)
-        this.pool = false
-      else
-        this.pool = true
+    var success = function(rawdata) {
+      self.rawdata = rawdata
     }
     var tryNext = function() {
       if(attempts.length === 0) {
@@ -40,14 +38,15 @@ Sound.prototype = {
   },
   play: function() {
     if(!Sound.Enabled) return
-    var audio = this.getAudio()
-    audio.play()
+    this.getAudio().play()
   },
   getAudio: function() {
     if(this.pool)
       return this.findAvailablePooledAudio()
+    return this.rawdata.cloneNode()
+  },
+  findAvailablePooledAudio: function() {
     var audio = new Audio()
-    audio.src = this.loadedPath
     return audio
   }
 }
@@ -74,10 +73,12 @@ function downloadFile(path, cb) {
 }
 
 function tryBase64(mime, path, success, failure) {
+  return failure()
   downloadFile(path, function(data) {
-    if(data)
-      return success(mime + ',' + data)
-    return failure()
+    if(!data) return failure
+    var audio = new Audio()
+    audio.src = mime + ';base64,' + data
+    return success(audio)
   })
 }
 
@@ -88,7 +89,7 @@ function tryAudio(path, success, failure) {
   } catch(ex) {
     return failure()
   }
-  return success(path)
+  return success(audio)
 }
 
 function loadmp3(path, success, failure) {

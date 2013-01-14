@@ -1,5 +1,5 @@
 var Sound = require('../primo-audio')
-var sound = new Sound("media/fire")
+var sound = new Sound("media/pickup")
 
 var buttons = document.getElementsByTagName("input")
 for(var i = 0; i < buttons.length; i++) {
