@@ -21,5 +21,9 @@
     "games"
   ],
   "author": "Rob Ashton",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "primo-events": "~1.0.0",
+    "underscore": "~1.4.3"
+  }
 }
