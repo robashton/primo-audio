@@ -69,9 +69,9 @@ function downloadFile(path, cb) {
 }
 
 
-var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
 
 function handleAudioLoading(audio, cb) {
+
   var force = function () {
     audio.pause();
     audio.removeEventListener('play', force, false);
@@ -79,12 +79,14 @@ function handleAudioLoading(audio, cb) {
   };
 
   var progress = function () {
+    audio.removeEventListener('play', force, false);
     audio.removeEventListener('progress', progress, false);
   };
 
   audio.addEventListener('play', force, false);
   audio.addEventListener('progress', progress, false);
 
+  var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
   var kickoff = function () {
     audio.play();
     document.documentElement.removeEventListener(click, kickoff, true);
@@ -94,6 +96,7 @@ function handleAudioLoading(audio, cb) {
 }
 
 function tryBase64(mime, path, success, failure) {
+  return failure()
   downloadFile(path, function(data) {
     if(!data) return failure
     var audio = new Audio()
