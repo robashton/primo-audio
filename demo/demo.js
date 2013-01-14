@@ -20,3 +20,8 @@ sound.on('loaded', function() {
     'URI', sound.rawdata.src
   ].join('\n')
 })
+
+
+sound.on('error', function(err) {
+  info.innerText += '\n' + err
+})

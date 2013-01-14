@@ -32,8 +32,13 @@ Sound.prototype = {
   play: function() {
     if(!Sound.Enabled) return
     var audio = this.getAudio()
+    audio.pause()
     audio.currentTime = 0
-    audio.play()
+    try {
+      audio.play()
+    } catch (ex) {
+      this.raise('error', ex)
+    }
   },
   getAudio: function() {
     return this.rawdata
